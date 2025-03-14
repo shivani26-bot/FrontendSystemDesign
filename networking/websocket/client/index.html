@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+  </head>
+  <body>
+    <h1>Websocket</h1>
+    <div id="messages"></div>
+    <br />
+    <input type="text" id="input" />
+    <button id="sendBtn">Send</button>
+  </body>
+  <script>
+    const messages = document.getElementById("messages");
+    const btn = document.getElementById("sendBtn");
+    const input = document.getElementById("input");
+    // Websocket is not present in node by default , it comes from browser api
+    // no need to import any package on clinet to use websockets
+    const socket = new WebSocket("ws://localhost:5000");
+    socket.addEventListener("open", () => {
+      console.log("client connected to server");
+    });
+    socket.addEventListener("message", (event) => {
+      console.log(event.data);
+      messages.innerHTML += `<div>${event.data.toString()}</div>`;
+    });
+
+    function sendMessage() {
+      socket.send(input.value);
+    }
+    btn.addEventListener("click", sendMessage);
+  </script>
+</html>
