@@ -1,0 +1,143 @@
+
+https://app.excalidraw.com/l/8lwXEYCWFUz/5BWKjqfiBK6
+Here we did code splitting based on routes 
+in next module we will do lazy loading at component level: import on visibility and import on interaction
+
+import on interaction:
+lazy load non-critical resources when  a user interacts with UI requiring it 
+The React.lazy method makes it easy to code- split a react application on a component level using dynamic imports
+The React.lazy function provides a built in way to separate components in an application into separate chunk of javascript with very little legwork
+you can then take care of loading states when you couple it with the suspense component
+
+import on visibility:
+besides user interaction we often have components that aren't visible on the initial page
+a good ex: of this is lazy loading images that arent directly visible int he viewport , but only get loaded once the user scrolls down 
+we can do the same with components . In order to know whether components are currently in our viewport , we canuse the IntersectionObserver or use libraries such as react-lazyload or react-loadable-visibility to quickly add import on visibility of our application
+
+
+Compressing javascript:
+https://dev.to/uguremirmustafa/how-to-compress-react-files-and-serve-with-iis-on-windows-server-3bj9
+https://medium.com/age-of-awareness/setup-react-with-webpack-and-babel-5114a14a47e9
+When working with a front-end application, there are two key stages of your code:
+
+Development Server Code: This is the unminified version of your code that runs on the development server. If you inspect the source during development, you can see the exact code as you wrote it, making debugging and iteration easier.
+
+Production Build Code: When you run build commands, the code is transformed into a minified version. This reduces the file size by removing unnecessary spaces, comments, and optimizing variable names. The production build is then served on the server.
+
+To further optimize the production build, compression algorithms like Gzip or Brotli are applied on top of the minified JavaScript bundles. This additional compression reduces the file size by 15–20%, improving loading times and overall performance.
+gzip and brotli are the most common ways to compress javascript and are widely supported by modern browsers.
+brotli offers a better compression ratio at similar compression levels
+next.jsx provides gzip compression by default but recommends enabling it on an http proxy like nginx
+if you use webpack to bundle your code,you can use the CompressionPlugin for gzip compression or the BrotliWebpackPlugin for Brotli compression
+Oyo saw a 15-20% reduction and wix swa a 21-25% reduction in file sizes after switching to brotli compression instead of gzip
+
+Response header:
+content-encoding: br (brotli compression)
+request headers:
+accept-encoding: type of encodings brower is supporting,
+
+
+what is webpack?
+it's a bundler, when we want to generate a production build, and apply compression algorithms we need a bundler
+Webpack is a module bundler primarily used in JavaScript projects. It takes the modules, dependencies, and assets of your application and bundles them into a single file (or multiple optimized files) to be served efficiently to the browser.
+Why Use Webpack?
+Performance Optimization: It helps reduce file sizes, applies compression, and splits code into manageable chunks.
+Dependency Management: Handles and resolves dependencies automatically.
+Cross-Browser Compatibility: Enables the use of modern JavaScript features while ensuring compatibility with older browsers via transpilers like Babel.
+Customizability: With its wide range of plugins and loaders, Webpack can be tailored to fit specific project requirements.
+Example of How Webpack Works:
+Entry Point: The main file where Webpack starts bundling (e.g., index.js).
+Output: Specifies the bundled file location (e.g., dist/bundle.js).
+Loaders: Process files like CSS or images.
+Plugins: Add additional features, such as minification or HTML template generation.
+
+
+what is babel?
+Babel is a JavaScript compiler that allows developers to write modern JavaScript code and ensure it works across different environments, including older browsers that may not support the latest JavaScript features.
+Transpiling Modern JavaScript:
+
+Converts newer ECMAScript (ES6+) syntax into older versions (e.g., ES5) for compatibility.
+Adds support for missing APIs in older environments using tools like @babel/polyfill or core-js.
+Plugins: Add specific transformations (e.g., @babel/plugin-transform-arrow-functions for arrow function conversion).
+Presets: Collections of plugins for specific environments (e.g., @babel/preset-env).
+
+
+what is prefetch?
+fetch and cache resources that may be requested some time soon but not immediately on the initial load.
+A prefetched resource is fetched when the browser is idle and has calculated  that it's got enough bandwidth after which it caches the prefetched resources
+
+When you add the webpackPrefetch: true command, you can observe that specific assets are fetched with the purpose of prefetching. These assets are loaded during idle time in the browser, ensuring they're ready before being explicitly required.
+
+By inspecting the headers, you can see that the purpose is set to prefetch, indicating the browser fetched the resource during idle time. When you later import the preloaded resource, such as 988.js, it retrieves the data from the prefetch cache instead of making a direct server call. This improves performance by reducing network latency and ensuring the resource is readily available.
+
+Additionally, chunk names can be customized. For instance, you can rename a chunk from 988.js to a more meaningful name, such as an emoji or a descriptive identifier. Upon refreshing, the renamed chunk is fetched and utilized, demonstrating the flexibility in naming your webpack chunks.
+
+
+Webpack's prefetching capabilities (webpackPrefetch: true) are not observable in development mode. Prefetching is only effective in a production build.
+
+What is preloaded?
+Inform the browser of critical resources before they are discovered
+The preload browser hint can be used to fetch resources that are critical to the current navigation, such as fonts or images are instantly (not longer than 3 seconds after the initial load) visible on a landing page
+Browser doesn't have any idle time where it fetches but in prefetch resources are fetched when browser is idle
+
+
+Tree Shaking
+The process of eliminating dead code before adding it to our bundle, is called tree Shaking
+Imagine you have a math.js file containing two functions: sum and multiply. Suppose the multiply function is used throughout your application, while the sum function is not used anywhere. When you create the final build of the application, only the multiply function is included in the bundle, while the unused sum function is excluded. This optimization helps reduce the bundle size by eliminating dead code that is no longer used.
+
+This process is referred to as tree shaking. The term comes from the analogy of shaking a tree, where all the dead leaves fall off. Similarly, when you "shake" your application, all the unused or "dead" code is removed, leaving only the necessary parts in the final build. This is the essence of tree shaking.
+
+optimization:{
+    usedExports: true //this enables the tree shaking
+}
+
+Virtual List
+This is the idea of rendering only visible rows of content in a dynamic list instead of the entire list
+the rows rendered are only a small subset of the full list with what is visible (the window) moving as  the user scrolls
+This can improve rendering performance
+
+Imagine a scenario where you need to render thousands of rows on a single web page. Rendering a large number of rows, such as 1,000 or even 100,000, can be very taxing on the browser's rendering performance. To address this issue and improve performance, we use a technique called virtual lists.
+
+The concept of virtual lists is straightforward: only render the elements that are currently visible on the screen. For instance, given a specific screen size, only a certain number of list items are visible at any given time, depending on the screen dimensions and the height of each item. For example, if 50 items are visible on the screen, instead of rendering all 1,000 elements, the application will render only a subset of items, such as 60.
+
+This subset includes 50 items visible within the viewport, plus a few additional items (e.g., 5 items above and 5 items below) to account for smooth scrolling. As the user scrolls, the rendered items are dynamically updated, keeping only those within or near the viewport in memory. This approach significantly enhances rendering performance by reducing the number of DOM elements being processed at any given time.
+
+By implementing virtual lists, you can achieve performance close to 60 FPS (Frames Per Second.) with just a small optimization using virtualization. For instance, if you have a list of 10,000 items, virtualization reduces the rendered elements to a defined number that are only visible in the current viewport. As the user scrolls, the rendered items are dynamically updated to match the visible portion of the list. This approach significantly enhances performance and ensures smooth scrolling by minimizing the number of DOM elements being processed.
+
+
+Core Web Vitals
+Web vitals is an initiative by google to provide inified guidance for quality signals that are essential to delivering a great user experience on the web
+Core web vitals are the subset of web vitals that apply to all web pages, should be measured  by all site owners and will be surgaced accross all google tools
+
+Three parts : CLS, INP, LCP
+
+Largest Contentful Paint (LCP):
+LCP reports the render time of the largest image, text block , or video visible in the viewport, relative to when the user first navigated to the page
+<img> elements (the first frame presentation time is used for animated content such as GIFS or animated PNGs)
+<image> elements inside an <svg> element
+<video> elements (the poster image load time or first frame presentation time for videos is used -whichever is earlier)
+An element with a background image loaded using the url() function, (as opposed to a CSS gradient);
+Block level elements containing text nodes or other inline-level text element children
+
+
+INP
+It assesses a pages's overall responsiveness to user interations by observing the latency of all click, tap and keyboard interactions that occur throughout the lifespan of a user's visit to a page
+The final INP value is the longest interaction obserbed, ignoring outliers
+Interaction to Next Paint (INP) is a metric that assesses a page's performance when the user interacts with it. For example, when a user clicks a button to open a modal, the expectation is that the modal will open within 200 milliseconds, meaning the next paint should occur within that time frame.
+
+The primary factor that can negatively impact the INP is a heavy task running on the main thread, which causes the application to choke and delays the next paint.
+
+If the INP is 200 milliseconds or less, the performance is considered good. If it is 500 milliseconds or less, there is room for improvement. However, if the INP exceeds 500 milliseconds, the performance is poor and requires optimization.
+
+
+CLS
+It is a measure of the largest burst of layout shift scores for every unexpected layout shift that occurs during the entire lifecycle of a page
+A good example of bad CLS (Cumulative Layout Shift) is ads. For instance, imagine you are visiting a page, and suddenly an ad appears at the top of the screen, causing all the content to shift downward. This is an example of poor CLS. It is important to be mindful when placing ads or widgets on the screen to ensure there is minimal or no disruption to the user's experience.
+
+//install web vitals chrome extension to see the lcp inp cls
+
+
+
+
+
+
